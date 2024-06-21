@@ -69,7 +69,7 @@ class CapexDataFramePerMonth(APIView):
             }
         
             return Response(month_capex_details, status=status.HTTP_200_OK)
-        return Response({"message": "DataFrame not found!"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "DataFrame not found!"}, status=status.HTTP_404_NOT_FOUND)
     
 class OpexDataFramePerMonth(APIView):
 

@@ -1,0 +1,37 @@
+{% extends 'data_visualization/base.html' %}
+{% load static %}
+
+
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'data_visualization/base.css' %}"/>
+    <style>
+        #read-later {
+            margin: 2rem 0;
+          }
+          
+        
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1 style="text-align: center;">Login Session</h1>
+    </div>
+    <div id="read-later" style="text-align: center;">
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            {% for form_field in form %}
+        <div class="form-control {% if form_field.errors %} errors {% endif %}" >
+            {{form_field.label_tag }}
+            {{ form_field }}
+            {{ form_field.errors }}
+        </div>
+        {% endfor %}
+        
+
+            <button type="submit" class="btn btn-secondary mt-2">Login</button>
+        </form>
+    </div>
+{% endblock content %}

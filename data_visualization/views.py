@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import requests
-from .forms import DateForm
+from .forms import DateForm, LoginForm
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 import plotly.express as px
 import plotly.graph_objects as go
@@ -8,23 +9,115 @@ import pandas as pd
 from datetime import datetime
 # Create your views here.
 
+def select_type_month(url_month:str, year:int, month:int, headers:dict, month_dict:dict, type:str):
+    URL_TYPE_MONTH = f"{url_month}/{year}/{month}"
+    
+    response_opex_month = requests.get(url=URL_TYPE_MONTH , headers=headers)
+    
+    if response_opex_month.status_code == 200:
+    
+        df_opex_month = pd.DataFrame(response_opex_month.json())
+        
+        fig = px.histogram(x=[c for c in df_opex_month["Description"]],
+            y=[c for c in df_opex_month["Amount"]],
+            title=f"{type.title()} {month_dict[int(month)]}",
+            labels={'x': 'Description', 'y': 'Amount'})
+        fig.update_layout(
+                title={
+                    'font_size': 24,
+                    'xanchor': 'center',
+                    'x': 0.5
+            })
+    else:
+        fig = px.histogram(x=[0],
+        y=[0],
+        title=f"{type.title()} {month_dict[int(month)]}",
+        labels={'x': 'Description', 'y': 'Amount'})
+        fig.update_layout(
+                title={
+                    'font_size': 24,
+                    'xanchor': 'center',
+                    'x': 0.5
+            })
+    
+    return fig.to_html()
+
+def select_type_year(url_year:str, year:int, headers:dict, type:str):
+    
+    
+    URL_TYPE_YEAR = f"{url_year}/{year}"
+    
+    response_opex_year = requests.get(url=URL_TYPE_YEAR, headers=headers)
+    df_opex_year = pd.DataFrame(response_opex_year.json())
+    
+    try:
+        df_long = pd.melt(df_opex_year, id_vars=["Month"], value_vars=["Salaries", "Utilities", "Rent"],
+                    var_name="Category", value_name="Amount")
+    except KeyError:
+        df_long = pd.melt(df_opex_year, id_vars=["Month"], value_vars=["Equipment", "Buildings", "Technology"],
+                    var_name="Category", value_name="Amount")
+    # Plot using plotly.express
+    fig_1 = px.line(df_long, x="Month", y="Amount", color="Category", markers=True, title=f"{type.title()} {year}")
+
+    # Add a title
+    fig_1.update_layout(
+            title={
+                'font_size': 24,
+                'xanchor': 'center',
+                'x': 0.5
+        })
+    
+    
+    return fig_1.to_html()
+
+
+def login(request):
+    login_form = LoginForm()
+    if request.method == "POST":
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            user = request.POST["username"]
+            password = request.POST["password"]
+            print(user, password)
+            parameters = {
+                "username": user,
+                "password": password
+            }
+            response = requests.post(url="http://127.0.0.1:8000/login/", json=parameters)
+            if response.status_code == 200:
+                request.session["token"] = response.json()["token"]
+                request.session["user"] = response.json()["user"]['id']
+                return HttpResponseRedirect("/chart")
+            else:
+                return HttpResponseRedirect("/chart/login")
+    
+    return render(request, 'data_visualization/login.html', context={
+        "form": login_form
+    })
+    
+def logout(request):
+    if request.method == "POST":
+        user_id = request.session.get("user")
+        access_token = request.session.get("token")
+        
+        headers = {
+            "Authorization": access_token
+        }
+        
+        parameters = {
+                    "user": user_id,
+                }
+        response = requests.post(url="http://127.0.0.1:8000/logout/", json=parameters, headers=headers)
+        if response.status_code == 200:
+            request.session["token"] = None
+            request.session["user"] = None
+            return HttpResponseRedirect("/chart/login")
 
 def chart(request):
+    access_token = request.session.get("token")
+    if access_token is None:
+        return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
     
-    headers = {
-        
-        "Authorization": "Bearer JWT_LOGIN"
-    }
-    
-    month_input = request.GET.get('month')
-    year_input = request.GET.get('year')
-    
-    if month_input is None:
-        month_input = 1
-    if year_input is None:
-        now = datetime.now()
-        year_input = int(now.strftime("%Y"))
-        
     month_dict = {
             1: "January",
             2: "February",
@@ -39,51 +132,31 @@ def chart(request):
             11: "November",
             12: "December"
         }
-        
     
-    URL_OPEX_MONTH = f"http://127.0.0.1:8000/api/opex-df-month/{year_input}/{month_input}"
+    headers = {
+        "Authorization": access_token
+    }
     
-    response_opex_month = requests.get(url=URL_OPEX_MONTH, headers=headers)
-    df_opex_month = pd.DataFrame(response_opex_month.json())
+    month_input = request.GET.get('month')
+    year_input = request.GET.get('year')
+    type_input = request.GET.get('type')
     
-    fig = px.histogram(x=[c for c in df_opex_month["Description"]],
-        y=[c for c in df_opex_month["Amount"]],
-        title=f"Opex {month_dict[int(month_input)]}",
-        labels={'x': 'Description', 'y': 'Amount'})
-    fig.update_layout(
-            title={
-                'font_size': 24,
-                'xanchor': 'center',
-                'x': 0.5
-        })
+    if month_input is None:
+        month_input = 1
+    if year_input is None:
+        now = datetime.now()
+        year_input = int(now.strftime("%Y"))
     
-    chart_opex_month = fig.to_html()
-    
-    URL_OPEX_YEAR = f"http://127.0.0.1:8000/api/opex-df-year/{year_input}"
-    
-    response_opex_year = requests.get(url=URL_OPEX_YEAR, headers=headers)
-    df_opex_year = pd.DataFrame(response_opex_year.json())
-    
-    df_long = pd.melt(df_opex_year, id_vars=["Month"], value_vars=["Salaries", "Utilities", "Rent"],
-                  var_name="Category", value_name="Amount")
-
-    # Plot using plotly.express
-    fig_1 = px.line(df_long, x="Month", y="Amount", color="Category", markers=True, title="Opex 2024")
-
-    # Add a title
-    fig_1.update_layout(
-            title={
-                'font_size': 24,
-                'xanchor': 'center',
-                'x': 0.5
-        })
-    
-    chart_opex_year = fig_1.to_html()
-    
+    if type_input is None:
+        type_input = "capex"
     
     URL_OPEX_CAPEX_REVENUE = f"http://127.0.0.1:8000/api/opex-capex-revenue/{year_input}"
     
     response_revenue = requests.get(url=URL_OPEX_CAPEX_REVENUE, headers=headers)
+    
+    if response_revenue.status_code != 200:
+        return JsonResponse({"unauthorized": "Your session is over, please redirect to login again! "})
+    
     df_revenue = pd.DataFrame(response_revenue.json())
     
     fig_2 = go.Figure()
@@ -118,7 +191,25 @@ def chart(request):
     )
     chart_revenue = fig_2.to_html()
     
-    context = {'chart_opex_month': chart_opex_month,'chart_opex_year': chart_opex_year , 'chart_revenue': chart_revenue,'form': DateForm()}
+    
+    
+    
+    
+    if type_input == "capex":
+        url_month = "http://127.0.0.1:8000/api/capex-df-month"
+        url_year = "http://127.0.0.1:8000/api/capex-df-year"
+   
+    elif type_input == "opex":
+        url_month = "http://127.0.0.1:8000/api/opex-df-month"
+        url_year = "http://127.0.0.1:8000/api/opex-df-year"
+
+    chart_type_month = select_type_month(url_month, int(year_input), int(month_input), headers, month_dict, type_input)
+    chart_type_year = select_type_year(url_year, int(year_input), headers, type_input)
+    
+    
+    
+    
+    context = {'chart_type_month': chart_type_month,'chart_type_year': chart_type_year, 'chart_revenue': chart_revenue,'form': DateForm(), "title":type_input}
     return render(request, 'data_visualization/chart.html', context)
     
     
