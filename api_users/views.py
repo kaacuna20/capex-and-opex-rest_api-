@@ -5,7 +5,7 @@ from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import *
+from api_users.serializers import *
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -86,7 +86,7 @@ class Login(TokenObtainPairView):
                     "user": user_serializer.data,
                     "message": "Login sucessfull!"
                 }, status=status.HTTP_200_OK)
-            return Response({"error": "User is invalid to login!"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "User is invalid to login!"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response({"error": "Password or Username wrong!"}, status=status.HTTP_400_BAD_REQUEST)
     
 class Logout(generics.GenericAPIView):
@@ -94,6 +94,9 @@ class Logout(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, *args, **kwargs):
+        
+        print(request.headers)
+        print(request.data)
         user = User.objects.filter(id=request.data.get('user', 0))
 
         if user.exists():

@@ -1,0 +1,13 @@
+{% extends 'data_visualization/base.html' %}
+
+{% block content %}
+    <form method="GET" action="{% url 'chart' %}">
+        {{ form }}
+
+        <button>Submit</button>
+    </form>
+    
+    {{ chart_opex_month|safe }}
+    {{ chart_opex_year|safe }}
+    {{ chart_revenue|safe }}
+{% endblock content %}
