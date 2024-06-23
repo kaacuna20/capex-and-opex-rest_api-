@@ -89,6 +89,7 @@ tests/
 |    │   ├── test_api_capex.py
 |    │   └── test_api_opex.py
 |    ├── test_api_user/
+|    │   ├── __init__.py
 |    │   └── test_user.py
 |    └── test_setup.py
 |
