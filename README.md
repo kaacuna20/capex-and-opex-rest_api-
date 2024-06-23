@@ -31,70 +31,71 @@
 
 ## Project Structure
 ```ini
-Website-house-project-searching/
-├── images/
-│   ├── api/
-│   └── profile/
-├── postgresql_db/
-├── nginx/
-│   ├── Dockerfile
-│   └── nginx.conf
-├── api-house-finder/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── run.py
-│   └── app/
-│      ├── __init__.py
-│      ├── database.py
-│      ├── main.py
-│      ├── models.py
-│      ├── helper/
-│      │     ├── download_img.py
-│      │     └── normalize_text.py
-│      ├── routers/	
-│      │  ├── __init__.py
-│      │  └── projects.py
-│      ├── utils/	
-│      │  ├── __init__.py
-│      │  └── auth.py
-│      └── test_project.py
+backend/
+├── backend/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── wsgi.py
+|   ├── settings.py
+│   └── urls.py
 │
-├── webapp-house-finder/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── run.py
-|   ├── config.py
-│   └── app/
-│      ├── __init__.py
-│      ├── models.py
-│      ├── auth/
-│      │     ├── __init__.py
-│      │     └── forms.py
-|      ├── common/
-│      │     ├── __init__.py
-│      │     └── mail.py
-│      ├── routers/	
-│      │   ├── __init__.py
-|      │   ├── api_documentation.py
-|      │   ├── api.py
-|      │   ├── index.py
-|      │   ├── profile.py
-|      │   ├── user.py
-│      │   └── project.py
-|      ├── templates/
-|      ├── static/
-│      ├── utils/	
-│      │  ├── __init__.py
-│      │  └── helpers.py
-│      └── test/
-|         ├── __init__.py
-|         ├── conftest.py
-|         ├── test_api_route.py
-|         ├── test_profile_route.py
-|         └── test_user_route.py
-│   
-├── docker-compose.png  
-├── docker-compose.yml
+├── api/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+|   ├── serializers.py
+|   ├── models.py
+|   ├── urls.py
+|   ├── views.py
+|   └── migrations/
+|
+├── api_users/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+|   ├── serializers.py
+|   ├── models.py
+|   ├── urls.py
+|   ├── views.py
+|   └── migrations/
+|
+├── data_visualization/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+|   ├── forms.py
+|   ├── models.py
+|   ├── test.py
+|   ├── urls.py
+|   ├── views.py
+|   ├── migrations/
+│   ├── templates/data_visualization/
+│   │   ├── base.html
+│   │   ├── chart.html
+│   │   ├── index.html
+│   │   └── login.html
+|   └── static/data_visualization/
+│       ├── base.css
+│       └── image/
+│
+tests/
+|    ├── factories/
+|    ├── __init__.py
+|    │   ├── __init__.py
+|    │   ├── api_factories.py
+|    │   └── api_user_factories.py
+|    ├── test_api/
+|    │   ├── __init__.py
+|    │   ├── test_api_capex.py
+|    │   └── test_api_opex.py
+|    ├── test_api_user/
+|    │   └── test_user.py
+|    └── test_setup.py
+|
+├── venv/
+├── db.sqlite3    
+├── manage.py  
+├── requirements.txt
 └── .env
 
 ```
@@ -274,7 +275,7 @@ OpEx Endpoints
   - Description: List all users (admin only).
 
 - Change Password
-  - URL: `/api-user/users/change-password/<int:id>/`
+  - URL: `/api-user/change-password/<int:id>/`
   - Method: PUT
   - Permission: IsAuthenticated
   - Description: Change the password for the authenticated user.
