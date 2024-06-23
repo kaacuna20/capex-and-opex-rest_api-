@@ -26,11 +26,10 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Snippets API",
+      title="Api Opex & Capex",
       default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
+      description="A Rest Api that simulate a private company that return kpi dataframe like opex & capex",
+      contact=openapi.Contact(email="kaacuna20@gmail.com"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
@@ -41,15 +40,13 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
-    #path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("api-auth/", include("rest_framework.urls")),
-    path("login/", Login.as_view(), name="login"),
-    path("logout/", Logout.as_view(), name="logout"),
+    path("api-login/", Login.as_view(), name="login"),
+    path("api-logout/", Logout.as_view(), name="logout"),
     path("api/", include("api.urls")),
     path("api-user/", include("api_users.urls")),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('chart/', include("data_visualization.urls")),
+    path('', include("data_visualization.urls")),
 ]

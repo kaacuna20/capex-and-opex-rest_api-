@@ -70,6 +70,8 @@ def select_type_year(url_year:str, year:int, headers:dict, type:str):
     
     return fig_1.to_html()
 
+def index(request):
+    return render(request, "data_visualization/index.html")
 
 def login(request):
     login_form = LoginForm()
@@ -78,18 +80,18 @@ def login(request):
         if login_form.is_valid():
             user = request.POST["username"]
             password = request.POST["password"]
-            print(user, password)
+        
             parameters = {
                 "username": user,
                 "password": password
             }
-            response = requests.post(url="http://127.0.0.1:8000/login/", json=parameters)
+            response = requests.post(url="http://127.0.0.1:8000/api-login/", json=parameters)
             if response.status_code == 200:
                 request.session["token"] = response.json()["token"]
                 request.session["user"] = response.json()["user"]['id']
                 return HttpResponseRedirect("/chart")
             else:
-                return HttpResponseRedirect("/chart/login")
+                return JsonResponse(response.json())
     
     return render(request, 'data_visualization/login.html', context={
         "form": login_form
@@ -107,11 +109,12 @@ def logout(request):
         parameters = {
                     "user": user_id,
                 }
-        response = requests.post(url="http://127.0.0.1:8000/logout/", json=parameters, headers=headers)
+        response = requests.post(url="http://127.0.0.1:8000/api-logout/", json=parameters, headers=headers)
         if response.status_code == 200:
             request.session["token"] = None
             request.session["user"] = None
-            return HttpResponseRedirect("/chart/login")
+            return HttpResponseRedirect("/login")
+        return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
 
 def chart(request):
     access_token = request.session.get("token")
@@ -191,10 +194,6 @@ def chart(request):
     )
     chart_revenue = fig_2.to_html()
     
-    
-    
-    
-    
     if type_input == "capex":
         url_month = "http://127.0.0.1:8000/api/capex-df-month"
         url_year = "http://127.0.0.1:8000/api/capex-df-year"
@@ -205,9 +204,6 @@ def chart(request):
 
     chart_type_month = select_type_month(url_month, int(year_input), int(month_input), headers, month_dict, type_input)
     chart_type_year = select_type_year(url_year, int(year_input), headers, type_input)
-    
-    
-    
     
     context = {'chart_type_month': chart_type_month,'chart_type_year': chart_type_year, 'chart_revenue': chart_revenue,'form': DateForm(), "title":type_input}
     return render(request, 'data_visualization/chart.html', context)

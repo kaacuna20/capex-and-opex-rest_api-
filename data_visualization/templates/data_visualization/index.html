@@ -1,0 +1,32 @@
+{% extends 'data_visualization/base.html' %}
+{% load static %}
+
+
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'data_visualization/base.css' %}"/>
+    <style>
+        #read-later {
+            margin: 2rem 0;
+          }
+          
+        
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1 style="text-align: center;">DATA VISUALIZATION</h1>
+    </div>
+    <div id="read-later" style="text-align: center;">
+        <img src="{% static 'image/graph.jpg' %}" height="400" width="400" alt="graph">
+    </div>
+    
+    <div id="read-later" style="text-align: center;">
+        <a href="http://127.0.0.1:8000/login"><button type="button" class="btn btn-dark">Visualizate Data</button></a>
+        <a href="http://127.0.0.1:8000/swagger"><button type="button" class="btn btn-success">Api Doc Swagger</button></a>
+        <a href="http://127.0.0.1:8000/redoc"><button type="button" class="btn btn-info">Api Doc Redoc</button></a>
+    </div>
+    
+{% endblock content %}
