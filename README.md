@@ -137,7 +137,7 @@ This project consists of a Django application designed to manage CapEx (Capital 
 ### API Endpoints
 CapEx Endpoints
 - Create CapEx Transaction
-  - URL: `/api/capex/`
+  - URL: `/api/capex/create`
   - Method: POST
   - Permission: IsAuthenticated
   - Description: Create a new CapEx transaction.
@@ -170,10 +170,30 @@ CapEx Endpoints
   - Permission: IsAuthenticated
   - Description: Retrieve a dataframe of CapEx transactions for a specific year.
 
+- Create CapEx Revenue
+  - URL: `/api/capex-revenue/`
+  - Method: POST
+  - Permission: IsAuthenticated
+  - Description: Create a new CapEx Revenue.
+  - Request Body:
+    
+       ```ini
+        {
+          "revenue": 300000,
+          "date": "2024-06-22"
+        }
+       ```
+       
+- List CapEx Revenue
+  - URL: `/api/capex-revenue/`
+  - Method: GET
+  - Permission: IsAuthenticated
+  - Description: List all CapEx Revenues.
+    
 OpEx Endpoints
 - Create OpEx Transaction
 
-  - URL: `/api/opex/`
+  - URL: `/api/opex/create/`
   - Method: POST
   - Permission: IsAuthenticated
   - Description: Create a new OpEx transaction.
@@ -210,11 +230,31 @@ OpEx Endpoints
   - Method: GET
   - Permission: IsAuthenticated
   - Description: Retrieve the percentage of revenue for CapEx and OpEx for a specific year.
+ 
+- Create OpEx Revenue
+  - URL: `/api/opex-revenue/create/`
+  - Method: POST
+  - Permission: IsAuthenticated
+  - Description: Create a new OpEx Revenue.
+  - Request Body:
+    
+       ```ini
+        {
+          "revenue": 300000,
+          "date": "2024-06-22"
+        }
+       ```
+       
+- List OpEx Revenue
+  - URL: `/api/opex-revenue/`
+  - Method: GET
+  - Permission: IsAuthenticated
+  - Description: List all OpEx Revenues.
 
 ### User Management Endpoints
 - Register User
 
-  - URL: `/api/register/`
+  - URL: `/api-user/register/`
   - Method: POST
   - Permission: AllowAny
   - Description: Register a new user.
@@ -228,13 +268,13 @@ OpEx Endpoints
     ```
     
 - List Users
-  - URL: `/api/users/`
+  - URL: `/api-user/list-users/`
   - Method: GET
   - Permission: IsAdminUser
   - Description: List all users (admin only).
 
 - Change Password
-  - URL: `/api/users/<pk>/change-password/`
+  - URL: `/api-user/users/change-password/<int:id>/`
   - Method: PUT
   - Permission: IsAuthenticated
   - Description: Change the password for the authenticated user.
@@ -247,7 +287,7 @@ OpEx Endpoints
     ```
   
 - Desactivate User
-  - URL: `/api/users/<pk>/`
+  - URL: `/api-user/delete/<int:id>/`
   - Method: DELETE
   - Permission: IsAdminUser
   - Description: Deactivate a user (admin only).
