@@ -19,6 +19,7 @@ class CreateCapexView(generics.CreateAPIView):
     serializer_class = CapexTransactionSerializer
     permission_classes = [IsAuthenticated]
 
+
 class CreateOpexView(generics.CreateAPIView):
     queryset = OpexTransaction.objects.all()
     serializer_class = OpexTransactionSerializer
@@ -32,12 +33,41 @@ class ListCapexView(generics.ListAPIView):
     def get_queryset(self):
         return CapexTransaction.objects.all()
     
+    
 class ListOpexView(generics.ListAPIView):
     serializer_class = OpexTransactionSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return OpexTransaction.objects.all()
+
+
+class CreateCapexRevenueView(generics.CreateAPIView):
+    queryset = CapexRevenue.objects.all()
+    serializer_class = CapexRevenueSerializers
+    permission_classes = [IsAuthenticated]
+
+
+class CreateOpexRevenueView(generics.CreateAPIView):
+    queryset = OpexRevenue.objects.all()
+    serializer_class = OpexRevenueSerializers
+    permission_classes = [IsAuthenticated]
+
+
+class ListCapexRevenueView(generics.ListAPIView):
+    serializer_class = CapexRevenueSerializers
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return CapexRevenue.objects.all()
+    
+    
+class ListOpexRevenueView(generics.ListAPIView):
+    serializer_class = OpexRevenueSerializers
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return OpexRevenue.objects.all()
 
 
 # OPEX AND CAPEX DATAFRAME VIEWS
@@ -70,6 +100,7 @@ class CapexDataFramePerMonth(APIView):
         
             return Response(month_capex_details, status=status.HTTP_200_OK)
         return Response({"message": "DataFrame not found!"}, status=status.HTTP_404_NOT_FOUND)
+
     
 class OpexDataFramePerMonth(APIView):
 
@@ -98,9 +129,9 @@ class OpexDataFramePerMonth(APIView):
             
             return Response(month_capex_details, status=status.HTTP_200_OK)
         return Response({"message": "DataFrame not found!"}, status=status.HTTP_404_NOT_FOUND)
+  
     
 class CapexDataFramePerYear(APIView):
-
     serializer_class = CapexTransactionSerializer
     permission_classes = [IsAuthenticated]
 
@@ -150,8 +181,8 @@ class CapexDataFramePerYear(APIView):
         except Exception:
             return Response({"message": "Bad request, make sure to write a right year format!"}, status=status.HTTP_400_BAD_REQUEST)
 
-class OpexDataFramePerYear(APIView):
 
+class OpexDataFramePerYear(APIView):
     serializer_class = OpexTransactionSerializer
     permission_classes = [IsAuthenticated]
 
@@ -200,6 +231,7 @@ class OpexDataFramePerYear(APIView):
             return Response(opex_data, status=status.HTTP_200_OK)
         except Exception:
             return Response({"message": "Bad request, make sure to write a right year format!"}, status=status.HTTP_400_BAD_REQUEST)
+    
         
 class CapexOpexPercentageRevenue(APIView):
     permission_classes = [IsAuthenticated]

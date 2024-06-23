@@ -37,5 +37,14 @@ class OpexTransactionSerializer(serializers.ModelSerializer):
             "user_planner": instance.user_planner.username
         }
         
+class CapexRevenueSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = CapexRevenue
+        fields = "__all__"
 
+
+class OpexRevenueSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = OpexRevenue
+        fields = "__all__"
 
