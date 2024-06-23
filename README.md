@@ -111,8 +111,8 @@ This project consists of a Django application designed to manage CapEx (Capital 
 ## Installation
 1. Clone the repository:
    ```ini
-    git clone https://github.com/yourusername/yourrepository.git
-    cd yourrepository
+    git clone https://github.com/kaacuna20/capex-and-opex-rest_api-.git
+    cd capex-and-opex-rest_api-
     ```
 2. Create and activate a virtual environment:
     ```ini
