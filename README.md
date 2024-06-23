@@ -78,7 +78,7 @@ backend/
 │       ├── base.css
 │       └── image/
 │
-tests/
+├──tests/
 |    ├── __init__.py
 |    ├── factories/
 |    │   ├── __init__.py
