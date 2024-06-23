@@ -4,26 +4,30 @@
 	</div>
 </div>
 
-<h4 align="justify">In the Atlantico department - Colombia, there are many housing projects, of many types (VIS, VIP, NO VIS) where people of all classes can get their own home, but there are many options and I thought the following, why not create a website where people can search all options in one site instead to do it website by website? I decided start to create my first big project, using my knowlegde of HTML, CSS, Bootstrap, Python and two of its frameworks, FastApi and Flask and last, conect all this using docker containers.</h4> 
+<h4 align="justify">When I worked in VOPAK, my work team spent a lot of time copying data from erp system to google sheet and later create and/or update DashBoard about main KPI like Capex and Opex;
+	and all that they did it manually, and I thought in a tool where could connect to <strong>erp database</strong>, get the the data of interest and plot in a customizing DashBoard automatically. Due to,
+	I wanted to create an API where simulate this process in a minimalist way, users can register, login and feed to erp system and this, return <strong>dataframe in JSON format</strong> and with thoose dataframes, we could create a DashBoard in a dynamic way.
+</h4> 
 
 ### Features of aplication
 
-- Let view housing projects in Atlantico - Colombia, specifically in Puerto Colombia, Barranquilla and Soledad city, filter the search by construction company, location and city;
-- User can register and login section, personalize their profiles and save their favorites projects on their accounts;
-- got the option to change their passwords or get a new password in section forgot password where the new password is sent to their email;
-- Each project page there is a comment section where each user can leave their opinions about the project;
-- There is a section for developer where can read the documentation about the API, whatching the routes to make the requests, the differents responses and restrictions;
-- Developers can generate their apikey to be allowed making requests;
+- Let login and logout creating routes for thoose actions;
+- User can register and login session, access the routes where can interact with dataframes and fill the capex and opex data;
+- Api must be documentated and show the routes where interact with methods and response to understand how api works;
+- The method to authenticate users is JWT;
+- Create and app where can render templates and show the api working with a minimalist dashboard;
 
 ## Table of Contents
-- [Project Structure](#Project-Structure)
+- [Project Structure](#project-structure)
 - [Overview](#overview)
-- [Installation](#Installation)
-- [Usage](#Usage)
-- [API Endpoints](#API-Endpoints)
-- [User Management Endpoints](#User-Management-Endpoints)
-- [Data Visualization Endpoints](#Data-Visualization-Endpoints)
-- [Running the Project](#Running-the-Project)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [User Management Endpoints](#user-management-endpoints)
+- [Data Visualization Endpoints](#data-visualization-endpoints)
+- [Running the Project](#running-the-project)
+- [Testing](#testing)
+- [Running Tests](#running-tests)
 
 ## Project Structure
 ```ini
@@ -104,16 +108,15 @@ This project consists of a Django application designed to manage CapEx (Capital 
 
 ## Installation
 1. Clone the repository:
-```ini
-git clone https://github.com/yourusername/yourrepository.git
-cd yourrepository
-```
-
+   ```ini
+    git clone https://github.com/yourusername/yourrepository.git
+    cd yourrepository
+    ```
 2. Create and activate a virtual environment:
-  ```ini
- python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-```
+    ```ini
+    python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   ```
 3. Install the required packages:
     ```ini
     pip install -r requirements.txt
@@ -134,7 +137,7 @@ source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 ### API Endpoints
 CapEx Endpoints
 - Create CapEx Transaction
-  - URL: /api/capex/
+  - URL: `/api/capex/`
   - Method: POST
   - Permission: IsAuthenticated
   - Description: Create a new CapEx transaction.
@@ -150,19 +153,19 @@ CapEx Endpoints
        ```
        
 - List CapEx Transactions
-  - URL: /api/capex/
+  - URL: `/api/capex/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: List all CapEx transactions.
     
 - Get CapEx DataFrame by Month
-  - URL: /api/capex-df-month/<year>/<month>/
+  - URL: `/api/capex-df-month/<year>/<month>/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: Retrieve a dataframe of CapEx transactions for a specific month.
     
 - Get CapEx DataFrame by Year
-  - URL: /api/capex-df-year/<year>/
+  - URL: `/api/capex-df-year/<year>/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: Retrieve a dataframe of CapEx transactions for a specific year.
@@ -170,7 +173,7 @@ CapEx Endpoints
 OpEx Endpoints
 - Create OpEx Transaction
 
-  - URL: /api/opex/
+  - URL: `/api/opex/`
   - Method: POST
   - Permission: IsAuthenticated
   - Description: Create a new OpEx transaction.
@@ -185,25 +188,25 @@ OpEx Endpoints
     ```
     
 - List OpEx Transactions
-  - URL: /api/opex/
+  - URL: `/api/opex/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: List all OpEx transactions.
     
 - Get OpEx DataFrame by Month
-  - URL: /api/opex-df-month/<year>/<month>/
+  - URL: `/api/opex-df-month/<year>/<month>/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: Retrieve a dataframe of OpEx transactions for a specific month.
     
 - Get OpEx DataFrame by Year
-  - URL: /api/opex-df-year/<year>/
+  - URL: `/api/opex-df-year/<year>/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: Retrieve a dataframe of OpEx transactions for a specific year.
 
 - Get CapEx and OpEx Percentage of Revenue
-  - URL: /api/opex-capex-revenue/<year>/
+  - URL: `/api/opex-capex-revenue/<year>/`
   - Method: GET
   - Permission: IsAuthenticated
   - Description: Retrieve the percentage of revenue for CapEx and OpEx for a specific year.
@@ -211,7 +214,7 @@ OpEx Endpoints
 ### User Management Endpoints
 - Register User
 
-  - URL: /api/register/
+  - URL: `/api/register/`
   - Method: POST
   - Permission: AllowAny
   - Description: Register a new user.
@@ -225,13 +228,13 @@ OpEx Endpoints
     ```
     
 - List Users
-  - URL: /api/users/
+  - URL: `/api/users/`
   - Method: GET
   - Permission: IsAdminUser
   - Description: List all users (admin only).
 
 - Change Password
-  - URL: /api/users/<pk>/change-password/
+  - URL: `/api/users/<pk>/change-password/`
   - Method: PUT
   - Permission: IsAuthenticated
   - Description: Change the password for the authenticated user.
@@ -244,13 +247,13 @@ OpEx Endpoints
     ```
   
 - Desactivate User
-  - URL: /api/users/<pk>/
+  - URL: `/api/users/<pk>/`
   - Method: DELETE
   - Permission: IsAdminUser
   - Description: Deactivate a user (admin only).
 
 - Login
-  - URL: /api-login/
+  - URL: `/api-login/`
   - Method: POST
   - Permission: AllowAny
   - Description: Log in a user and obtain authentication tokens.
@@ -263,7 +266,7 @@ OpEx Endpoints
      ```
 
 - Logout
-  - URL: /api-logout/
+  - URL: `/api-logout/`
   - Method: POST
   - Permission: IsAuthenticated
   - Description: Log out a user and invalidate the authentication token.
@@ -275,22 +278,22 @@ OpEx Endpoints
    
 ## Data Visualization Endpoints
 - Index
-  - URL: /
+  - URL: `/`
   - Method: GET
   - Description: Home page.
 
 - Login Page
-  - URL: /login/
+  - URL: `/login/`
   - Method: GET, POST
   - Description: Login page for users.
 
 - Logout
-  - URL: /logout/
+  - URL: `/logout/`
   - Method: POST
   - Description: Logout the user.
 
 - Chart Visualization
-  - URL: /chart/
+  - URL: `/chart/`
   - Method: GET
   - Description: Page to visualize CapEx and OpEx data using Plotly charts.
 
@@ -303,3 +306,356 @@ You can access the API documentation generated by Swagger at:
 ```ini
 http://127.0.0.1:8000/swagger/
 ```
+## Testing
+This project includes a comprehensive testing setup using Django's testing framework and the Django REST framework. The tests cover various aspects of the API, including user management, CAPEX, and OPEX transactions.
+
+### Setting Up Tests
+1. Create a `tests/ Directory`
+
+Ensure that a tests/ directory exists at the same level as manage.py.
+
+2. Create `test_setup.py`
+
+This file contains the base setup for the tests, including user authentication.
+
+   ```ini
+	# tests/test_setup.py
+	from django.urls import reverse
+	from rest_framework import status
+	from rest_framework.test import APITestCase
+	from django.contrib.auth.models import User
+	
+	class TestSetup(APITestCase):
+	    
+	    def setUp(self):
+	        self.user = User.objects.create_superuser(
+	            username="test_username",
+	            password='testpassword',
+	            email="test@email.com"
+	        )
+	        
+	        self.login_url = reverse("login")
+	        
+	        response = self.client.post(
+	            self.login_url,
+	            {
+	                'username': "test_username",
+	                'password': "testpassword"
+	            },
+	            format='json'
+	        )
+	        
+	        self.assertEqual(response.status_code, status.HTTP_200_OK)
+	        
+	        self.token = response.data['token']
+	       
+	        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+	        return super().setUp()
+   ```
+3. Create factories/ Directory
+
+This directory contains factory classes to create test data.
+- api_factories.py
+
+  ```ini
+	  # tests/factories/api_factories.py
+	from faker import Faker
+	from django.contrib.auth.models import User
+	import random
+	from api.models import *
+	
+	faker = Faker()
+	
+	class CapexFactories:
+	    
+	    def create_capex_transation(self):
+	        user = User.objects.create_user(
+	            username="project_user",
+	            password='project_user_password',
+	            email=faker.email()
+	        )
+	        
+	        contractor = CapexContractor.objects.create(
+	            name=faker.company(),
+	            nit=str(faker.random_number(digits=11))
+	        )
+	        
+	        capex = CapexTransaction.objects.create(
+	            date="2024-01-01",
+	            description=faker.text(),
+	            amount=15000, 
+	            status=random.choice(STATUS_CHOICES),
+	            category=random.choice(CAPEX_CHOICES),
+	            contractor=contractor,
+	            user_project=user
+	        )
+	        
+	        return capex
+	    
+	class OpexFactories:
+	    
+	    def create_opex_transation(self):
+	        user = User.objects.create_user(
+	            username="planner_user",
+	            password='planner_user_password',
+	            email=faker.email()
+	        )
+	        
+	        contractor = OpexContractor.objects.create(
+	            name=faker.company(),
+	            nit=str(faker.random_number(digits=11))
+	        )
+	        
+	        opex = OpexTransaction.objects.create(
+	            date="2024-01-01",
+	            description=faker.text(),
+	            amount=15000, 
+	            status=random.choice(STATUS_CHOICES),
+	            category=random.choice(OPEX_CHOICES),
+	            contractor=contractor,
+	            user_planner=user
+	        )
+	        
+	        return opex
+	    
+	class CapexRevenueFactory:
+	    def create_capex_revenue(self):
+		capex_revenue = CapexRevenue.objects.create(
+		revenue=300000,
+		date="2024-01-01"
+		)
+		return capex_revenue
+		
+	class OpexRevenueFactory:
+	    def create_opex_revenue(self):
+		opex_revenue = OpexRevenue.objects.create(
+		revenue=400000,
+		date="2024-01-01"
+		)
+		return opex_revenue
+	 ```
+- api_user_factories.py
+    ```ini
+		# tests/factories/api_user_factories.py
+	from faker import Faker
+	from django.contrib.auth.models import User
+	
+	faker = Faker()
+	
+	class UserFactory:
+	    
+	    def create_user(self):
+	        user = User.objects.create_user(
+	            username="new_user",
+	            password='new_password',
+	            email=faker.email()
+	        )
+	        return user
+	    
+	    def user_desactivate(self):
+	        user = User.objects.create_user(
+	            username="new_user",
+	            password='password',
+	            email=faker.email(),
+	            is_active=False
+	        )
+	        return user
+
+	 ```
+    
+4. Create `test_api/` Directory
+This directory contains test cases for the API endpoints.
+- test_api_capex.py
+  
+	 ```ini
+		# tests/test_api/test_api_capex.py
+	from django.urls import reverse
+	from rest_framework import status
+	from tests.test_setup import TestSetup
+	from tests.factories.api_factories import CapexFactories, CapexRevenueFactory
+	
+	class ApiCapexTestcase(TestSetup):
+	    
+	    def test_capex_list(self):
+	        capex_registered = CapexFactories().create_capex_transation()
+	        list_capex_url = reverse("capex")
+	        
+	        response = self.client.get(
+	            list_capex_url,
+	            {},
+	            format='json'
+	        )
+	        
+	        self.assertEqual(response.status_code, status.HTTP_200_OK)
+	        self.assertEqual(len(response.data), 1)
+	        
+	    def test_capex_df_per_month(self):
+	        capex_registered = CapexFactories().create_capex_transation()
+	        wrong_month = 15
+	        capex_df_url = f"/api/capex-df-month/1/{wrong_month}"
+	        
+	        response = self.client.get(
+	            capex_df_url,
+	            {},
+	            format='json'
+	        )
+	  
+	        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+	        self.assertEqual(response.data, {"message": "DataFrame not found!"})
+	        
+	    def test_capex_df_per_year(self):
+	        capex_registered = CapexFactories().create_capex_transation()
+	        capex_revenue = CapexRevenueFactory().create_capex_revenue()
+	        wrong_year = 00000000
+	        capex_df_url = f"/api/capex-df-year/{wrong_year}"
+	        
+	        response = self.client.get(
+	            capex_df_url,
+	            {},
+	            format='json'
+	        )
+	  
+	        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+	        self.assertEqual(response.data, {"message": "Bad request, make sure to write a right year format!"})
+	```
+  
+- test_api_opex.py
+  
+	 ```ini
+		# tests/test_api/test_api_opex.py
+	from django.urls import reverse
+	from rest_framework import status
+	from tests.test_setup import TestSetup
+	from tests.factories.api_factories import OpexFactories, OpexRevenueFactory
+	
+	class ApiOpexTestcase(TestSetup):
+	    
+	    def test_opex_list(self):
+	        opex_registered = OpexFactories().create_opex_transation()
+	        list_opex_url = reverse("opex")
+	        
+	        response = self.client.get(
+	            list_opex_url,
+	            {},
+	            format='json'
+	        )
+	        
+	        self.assertEqual(response.status_code, status.HTTP_200_OK)
+	        self.assertEqual(len(response.data), 1)
+	        
+	    def test_opex_df_per_month(self):
+	        opex_registered = OpexFactories().create_opex_transation()
+	        wrong_month = 15
+	        opex_df_url = f"/api/opex-df-month/1/{wrong_month}"
+	        
+	        response = self.client.get(
+	            opex_df_url,
+	            {},
+	            format='json'
+	        )
+	  
+	        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+	        self.assertEqual(response.data, {"message": "DataFrame not found!"})
+	        
+	    def test_opex_df_per_year(self):
+	        opex_registered = OpexFactories().create_opex_transation()
+	        opex_revenue = OpexRevenueFactory().create_opex_revenue()
+	        wrong_year = 00000000
+	        opex_df_url = f"/api/opex-df-year/{wrong_year}"
+	        
+	        response = self.client.get(
+	            opex_df_url,
+	            {},
+	            format='json'
+	        )
+	  
+	        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+	        self.assertEqual(response.data, {"message": "Bad request, make sure to write a right year format!"})
+	
+	```
+  
+5. Create `test_api_user/` Directory
+This directory contains test cases for user-related API endpoints.
+- test_user.py
+  
+	```ini
+	# tests/test_api_user/test_user.py
+	from django.urls import reverse
+	from rest_framework import status
+	from tests.test_setup import TestSetup
+	from tests.factories.api_user_factories import UserFactory
+	
+	class ApiUserTestcase(TestSetup):
+	    
+	    def test_list_users(self):
+	        user_registered = UserFactory().create_user()
+	        list_users_url = reverse("list-users")
+	        
+	        response = self.client.get(
+	            list_users_url,
+	            {},
+	            format='json'
+	        )
+	        
+	        self.assertEqual(response.status_code, status.HTTP_200_OK)
+	        self.assertEqual(len(response.data), 2)
+	       
+	    def test_change_password(self):
+	        user_registered = UserFactory().create_user()
+	        change_password_url = f"/api-user/change-password/{user_registered.pk}"
+	        response = self.client.put(
+	            change_password_url,
+	            {"password": "new_password",
+	             "new_password": "changed_password"
+	            },
+	            format='json'
+	        )
+	        self.assertEqual(response.status_code, status.HTTP_200_OK)
+	        self.assertEqual(response.data, {'success': 'password changed successfully'})
+	        
+	    def test_delete_user(self):
+	        user_registered = UserFactory().create_user()
+	        delete_user_url = f"/api-user/delete/{user_registered.pk}"
+	        response = self.client.delete(
+	            delete_user_url,
+	            {},
+	            format='json'
+	        )
+	        
+	        self.assertEqual(response.status_code, status.HTTP_200_OK)
+	        self.assertEqual(response.data, {"message": "User has been desactivated sucessfully!"})
+	        
+	    def test_login(self):
+	        user_desactivated = UserFactory().user_desactivate()
+	        
+	        login_url = reverse("login")
+	        
+	        response = self.client.post(
+	            login_url,
+	            {
+	                'username': user_desactivated.username,
+	                'password': "password"
+	            },
+	            format='json'
+	        )
+	        
+	        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+	        self.assertEqual(response.data, {"error": "Password, Username wrong or User is invalid!"})
+	
+	
+	```
+ ## Running Tests
+ To run the tests, execute the following command in your terminal:
+ ```ini
+	python manage.py test 
+```
+This command will discover and run all the test cases defined in the tests/ directory.
+
+### Notes
+- Ensure that the `django.urls` and `rest_framework` modules are installed and properly configured in your Django project.
+- The `Faker` library is used for generating random test data. Make sure to install it via `pip install faker`.
+- The `factories` module provides helper functions to create instances of your models for testing purposes.
+- The `test_setup.py` file sets up the test environment, including creating a superuser and obtaining an authentication token for the tests.
+- Test cases are organized into different files based on the functionality they cover, such as `test_api_capex.p`y for CAPEX-related tests, `test_api_opex.py` for OPEX-related tests, and `test_user.py` for user-related tests.
+  
+This setup ensures that your API is thoroughly tested and helps maintain the integrity of your application.
