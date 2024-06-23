@@ -3,6 +3,7 @@ certifi==2024.6.2
 charset-normalizer==3.3.2
 contourpy==1.2.1
 cycler==0.12.1
+dj-database-url==2.2.0
 Django==5.0.6
 django-cors-headers==4.3.1
 djangorestframework==3.15.1
@@ -20,6 +21,7 @@ packaging==24.1
 pandas==2.2.2
 pillow==10.3.0
 plotly==5.22.0
+psycopg2-binary==2.9.9
 PyJWT==2.8.0
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
@@ -30,6 +32,7 @@ requests==2.32.3
 six==1.16.0
 sqlparse==0.5.0
 tenacity==8.4.1
+typing_extensions==4.12.2
 tzdata==2024.1
 uritemplate==4.1.1
 urllib3==2.2.2
