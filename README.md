@@ -79,8 +79,8 @@ backend/
 │       └── image/
 │
 tests/
-|    ├── factories/
 |    ├── __init__.py
+|    ├── factories/
 |    │   ├── __init__.py
 |    │   ├── api_factories.py
 |    │   └── api_user_factories.py
