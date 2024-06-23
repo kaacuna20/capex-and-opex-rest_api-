@@ -24,12 +24,11 @@ class ListUserView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     def list(self, request):
-        # Note the use of `get_queryset()` instead of `self.queryset`
         queryset = self.get_queryset()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
     
-# TODO 1: update password
+
 class ChangePassword(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
 
@@ -45,7 +44,6 @@ class ChangePassword(generics.GenericAPIView):
             user.save()
             return Response({'success': 'password changed successfully'}, status=status.HTTP_200_OK)
     
-# TODO 2: update is_active with IsAdminUser (delete method)
 
 class UserDestroyAPIView(generics.DestroyAPIView):
     serializer_class = UserSerializer
@@ -63,7 +61,6 @@ class UserDestroyAPIView(generics.DestroyAPIView):
         
         return Response({"message": "User not found!"}, status=status.HTTP_400_BAD_REQUEST)        
 
-# TODO 3: service recover forgotten password
 
 # LOGIN AND LOGOUT
 class Login(TokenObtainPairView):
@@ -87,7 +84,7 @@ class Login(TokenObtainPairView):
                     "message": "Login sucessfull!"
                 }, status=status.HTTP_200_OK)
             return Response({"error": "User is invalid to login!"}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response({"error": "Password or Username wrong!"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Password, Username wrong or User is invalid!"}, status=status.HTTP_400_BAD_REQUEST)
     
 class Logout(generics.GenericAPIView):
 
