@@ -10,6 +10,7 @@ djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.7
 Faker==25.9.1
 fonttools==4.53.0
+gunicorn==22.0.0
 idna==3.7
 inflection==0.5.1
 kiwisolver==1.4.5
