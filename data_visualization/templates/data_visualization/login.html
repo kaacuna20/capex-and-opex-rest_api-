@@ -20,7 +20,7 @@
         <h1 style="text-align: center;">Login Session</h1>
     </div>
     <div id="read-later" style="text-align: center;">
-        <form method="POST" action="{% url 'login' %}">
+        <form method="POST" action="{% url 'chart-login' %}">
             {% csrf_token %}
             {% for form_field in form %}
         <div class="form-control {% if form_field.errors %} errors {% endif %}" >

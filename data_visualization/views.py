@@ -77,9 +77,10 @@ def index(request):
 
 def login(request):
     login_form = LoginForm()
-    url = os.getenv('HOST')
+    url = os.getenv('MAIN_URL')
     if request.method == "POST":
         login_form = LoginForm(request.POST)
+        
         if login_form.is_valid():
             user = request.POST["username"]
             password = request.POST["password"]
@@ -88,7 +89,9 @@ def login(request):
                 "username": user,
                 "password": password
             }
+         
             response = requests.post(url=f"{url}/api-login/", json=parameters)
+            
             if response.status_code == 200:
                 request.session["token"] = response.json()["token"]
                 request.session["user"] = response.json()["user"]['id']
@@ -101,7 +104,7 @@ def login(request):
     })
     
 def logout(request):
-    url = os.getenv('HOST')
+    url = os.getenv('MAIN_URL')
     if request.method == "POST":
         user_id = request.session.get("user")
         access_token = request.session.get("token")
@@ -154,7 +157,7 @@ def chart(request):
         now = datetime.now()
         year_input = int(now.strftime("%Y"))
     
-    url = os.getenv('HOST')
+    url = os.getenv('MAIN_URL')
     
     if type_input is None:
         type_input = "capex"
