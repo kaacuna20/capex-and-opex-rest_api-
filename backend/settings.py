@@ -34,10 +34,10 @@ ALLOWED_HOSTS = [os.getenv('HOST')]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        #"rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        #"rest_framework.permissions.IsAuthenticated",
     ],
 }
 
@@ -113,6 +113,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'CONN_MAX_AGE': 600,
     }
 }
 DATABASES["default"] = dj_database_url.parse(os.getenv('DB_URL'))
