@@ -81,52 +81,27 @@ def index(request):
 def login(request):
     login_form = LoginForm()
     url = os.getenv('MAIN_URL')
-    if not url:
-        logger.error("HOST environment variable not set")
-        return JsonResponse({"error": "Internal server error"}, status=500)
-
-    if not url.endswith('/'):
-        url += '/'
-
-    logger.debug(f"HOST: {url}")
-
     if request.method == "POST":
         login_form = LoginForm(request.POST)
+        
         if login_form.is_valid():
-            user = login_form.cleaned_data["username"]
-            password = login_form.cleaned_data["password"]
+            user = request.POST["username"]
+            password = request.POST["password"]
         
             parameters = {
                 "username": user,
                 "password": password
             }
-
-            logger.debug(f"Request URL: {url}api-login/")
-            logger.debug(f"Request parameters: {parameters}")
-
-            try:
-                response = requests.post(url=f"{url}api-login/", json=parameters, timeout=20)
-                logger.debug(f"API response status code: {response.status_code}")
-                logger.debug(f"API response headers: {response.headers}")
-                logger.debug(f"API response content: {response.content}")
-
-                if response.status_code == 200:
-                    logger.info("Login successful")
-                    request.session["token"] = response.json().get("token")
-                    request.session["user"] = response.json().get("user", {}).get('id')
-                    logger.info("Redirecting to /chart")
-                    return HttpResponseRedirect("/chart")
-                else:
-                    logger.error(f"Login failed: {response.json()}")
-                    return JsonResponse(response.json(), status=response.status_code)
-
-            except requests.exceptions.Timeout:
-                logger.error("The request timed out")
-                return JsonResponse({"error": "The request timed out"}, status=500)
-            except requests.exceptions.RequestException as e:
-                logger.error(f"An error occurred: {e}")
-                return JsonResponse({"error": "An error occurred"}, status=500)
-
+         
+            response = requests.post(url=f"{url}api-login/", json=parameters)
+            
+            if response.status_code == 200:
+                request.session["token"] = response.json()["token"]
+                request.session["user"] = response.json()["user"]['id']
+                return HttpResponseRedirect("/chart")
+            else:
+                return JsonResponse(response.json())
+    
     return render(request, 'data_visualization/login.html', context={
         "form": login_form
     })
