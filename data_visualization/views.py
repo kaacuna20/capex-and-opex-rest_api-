@@ -88,6 +88,8 @@ def login(request):
     if not url.endswith('/'):
         url += '/'
 
+    logger.debug(f"HOST: {url}")
+
     if request.method == "POST":
         login_form = LoginForm(request.POST)
         if login_form.is_valid():
@@ -99,8 +101,11 @@ def login(request):
                 "password": password
             }
 
+            logger.debug(f"Request URL: {url}api-login/")
+            logger.debug(f"Request parameters: {parameters}")
+
             try:
-                response = requests.post(url=f"{url}api-login/", json=parameters, timeout=10)
+                response = requests.post(url=f"{url}api-login/", json=parameters, timeout=20)
                 logger.debug(f"API response status code: {response.status_code}")
                 logger.debug(f"API response headers: {response.headers}")
                 logger.debug(f"API response content: {response.content}")
