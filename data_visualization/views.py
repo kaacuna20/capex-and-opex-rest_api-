@@ -47,8 +47,6 @@ def select_type_month(url_month:str, year:int, month:int, headers:dict, month_di
     return fig.to_html()
 
 def select_type_year(url_year:str, year:int, headers:dict, type:str):
-    
-    
     URL_TYPE_YEAR = f"{url_year}/{year}"
     
     response_opex_year = requests.get(url=URL_TYPE_YEAR, headers=headers)
@@ -75,10 +73,7 @@ def select_type_year(url_year:str, year:int, headers:dict, type:str):
     return fig_1.to_html()
 
 def index(request):
-    url = os.getenv('HOST')
-    return render(request, "data_visualization/index.html", {
-        "url": url
-    })
+    return render(request, "data_visualization/index.html")
 
 def login(request):
     login_form = LoginForm()
@@ -102,8 +97,7 @@ def login(request):
                 return JsonResponse(response.json())
     
     return render(request, 'data_visualization/login.html', context={
-        "form": login_form,
-        "url": url
+        "form": login_form
     })
     
 def logout(request):

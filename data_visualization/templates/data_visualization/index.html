@@ -24,9 +24,9 @@
     </div>
     
     <div id="read-later" style="text-align: center;">
-        <a href="{{url}}/login"><button type="button" class="btn btn-dark">Visualizate Data</button></a>
-        <a href="{{url}}/swagger"><button type="button" class="btn btn-success">Api Doc Swagger</button></a>
-        <a href="{{url}}/redoc"><button type="button" class="btn btn-info">Api Doc Redoc</button></a>
+        <a href="{% url 'chart-login' %}"><button type="button" class="btn btn-dark">Visualizate Data</button></a>
+        <a href="{% url 'schema-swagger-ui' %}"><button type="button" class="btn btn-success">Api Doc Swagger</button></a>
+        <a href="{% url 'schema-redoc' %}"><button type="button" class="btn btn-info">Api Doc Redoc</button></a>
     </div>
     
 {% endblock content %}
