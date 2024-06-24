@@ -80,7 +80,7 @@ def index(request):
 
 def login(request):
     login_form = LoginForm()
-    url = os.getenv('HOST')
+    url = os.getenv('MAIN_URL')
     if not url:
         logger.error("HOST environment variable not set")
         return JsonResponse({"error": "Internal server error"}, status=500)
