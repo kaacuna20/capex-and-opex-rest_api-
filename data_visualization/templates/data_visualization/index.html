@@ -20,13 +20,13 @@
         <h1 style="text-align: center;">DATA VISUALIZATION</h1>
     </div>
     <div id="read-later" style="text-align: center;">
-        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" height="400" width="400" alt="graph">
+        <img src="{% static 'image/graph.jpg' %}" height="400" width="400" alt="graph">
     </div>
     
     <div id="read-later" style="text-align: center;">
-        <a href="https://capex-and-opex-rest-api.onrender.com/login"><button type="button" class="btn btn-dark">Visualizate Data</button></a>
-        <a href="https://capex-and-opex-rest-api.onrender.com/swagger"><button type="button" class="btn btn-success">Api Doc Swagger</button></a>
-        <a href="https://capex-and-opex-rest-api.onrender.com/redoc"><button type="button" class="btn btn-info">Api Doc Redoc</button></a>
+        <a href="{{url}}/login"><button type="button" class="btn btn-dark">Visualizate Data</button></a>
+        <a href="{{url}}/swagger"><button type="button" class="btn btn-success">Api Doc Swagger</button></a>
+        <a href="{{url}}/redoc"><button type="button" class="btn btn-info">Api Doc Redoc</button></a>
     </div>
     
 {% endblock content %}

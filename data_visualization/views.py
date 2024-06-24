@@ -7,6 +7,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv(".env")
 # Create your views here.
 
 def select_type_month(url_month:str, year:int, month:int, headers:dict, month_dict:dict, type:str):
@@ -71,10 +75,14 @@ def select_type_year(url_year:str, year:int, headers:dict, type:str):
     return fig_1.to_html()
 
 def index(request):
-    return render(request, "data_visualization/index.html")
+    url = os.getenv('HOST')
+    return render(request, "data_visualization/index.html", {
+        "url": url
+    })
 
 def login(request):
     login_form = LoginForm()
+    url = os.getenv('HOST')
     if request.method == "POST":
         login_form = LoginForm(request.POST)
         if login_form.is_valid():
@@ -85,7 +93,7 @@ def login(request):
                 "username": user,
                 "password": password
             }
-            response = requests.post(url="http://127.0.0.1:8000/api-login/", json=parameters)
+            response = requests.post(url=f"{url}/api-login/", json=parameters)
             if response.status_code == 200:
                 request.session["token"] = response.json()["token"]
                 request.session["user"] = response.json()["user"]['id']
@@ -94,10 +102,12 @@ def login(request):
                 return JsonResponse(response.json())
     
     return render(request, 'data_visualization/login.html', context={
-        "form": login_form
+        "form": login_form,
+        "url": url
     })
     
 def logout(request):
+    url = os.getenv('HOST')
     if request.method == "POST":
         user_id = request.session.get("user")
         access_token = request.session.get("token")
@@ -109,7 +119,7 @@ def logout(request):
         parameters = {
                     "user": user_id,
                 }
-        response = requests.post(url="http://127.0.0.1:8000/api-logout/", json=parameters, headers=headers)
+        response = requests.post(url=f"{url}/api-logout/", json=parameters, headers=headers)
         if response.status_code == 200:
             request.session["token"] = None
             request.session["user"] = None
@@ -150,10 +160,12 @@ def chart(request):
         now = datetime.now()
         year_input = int(now.strftime("%Y"))
     
+    url = os.getenv('HOST')
+    
     if type_input is None:
         type_input = "capex"
     
-    URL_OPEX_CAPEX_REVENUE = f"http://127.0.0.1:8000/api/opex-capex-revenue/{year_input}"
+    URL_OPEX_CAPEX_REVENUE = f"{url}/api/opex-capex-revenue/{year_input}"
     
     response_revenue = requests.get(url=URL_OPEX_CAPEX_REVENUE, headers=headers)
     
@@ -195,12 +207,12 @@ def chart(request):
     chart_revenue = fig_2.to_html()
     
     if type_input == "capex":
-        url_month = "http://127.0.0.1:8000/api/capex-df-month"
-        url_year = "http://127.0.0.1:8000/api/capex-df-year"
+        url_month = f"{url}/api/capex-df-month"
+        url_year = f"{url}/api/capex-df-year"
    
     elif type_input == "opex":
-        url_month = "http://127.0.0.1:8000/api/opex-df-month"
-        url_year = "http://127.0.0.1:8000/api/opex-df-year"
+        url_month = f"{url}/api/opex-df-month"
+        url_year = f"{url}/api/opex-df-year"
 
     chart_type_month = select_type_month(url_month, int(year_input), int(month_input), headers, month_dict, type_input)
     chart_type_year = select_type_year(url_year, int(year_input), headers, type_input)
