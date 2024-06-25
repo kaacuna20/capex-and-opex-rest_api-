@@ -325,7 +325,7 @@ class CapexOpexPercentageRevenue(APIView):
             for col in category_capex:
                 capex_df[col] = capex_df[col].astype(float)
 
-            print()
+        
             capex_df['Total CapEx'] = capex_df[category_capex].sum(axis=1)
 
             # Calculate CapEx % of Revenue with zero division handling

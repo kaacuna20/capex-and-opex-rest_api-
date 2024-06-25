@@ -165,7 +165,7 @@ def chart(request):
     if type_input is None:
         type_input = "capex"
     
-    URL_OPEX_CAPEX_REVENUE = f"{url}api/opex-capex-revenue/{year_input}"
+    URL_OPEX_CAPEX_REVENUE = f"{url}/api/opex-capex-revenue/{year_input}"
     
     response_revenue = requests.get(url=URL_OPEX_CAPEX_REVENUE, headers=headers)
     
@@ -207,12 +207,12 @@ def chart(request):
     chart_revenue = fig_2.to_html()
     
     if type_input == "capex":
-        url_month = f"{url}api/capex-df-month"
-        url_year = f"{url}api/capex-df-year"
+        url_month = f"{url}/api/capex-df-month"
+        url_year = f"{url}/api/capex-df-year"
    
     elif type_input == "opex":
-        url_month = f"{url}api/opex-df-month"
-        url_year = f"{url}api/opex-df-year"
+        url_month = f"{url}/api/opex-df-month"
+        url_year = f"{url}/api/opex-df-year"
 
     chart_type_month = select_type_month(url_month, int(year_input), int(month_input), headers, month_dict, type_input)
     chart_type_year = select_type_year(url_year, int(year_input), headers, type_input)
