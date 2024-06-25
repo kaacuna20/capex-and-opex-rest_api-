@@ -1,0 +1,54 @@
+{% extends 'data_visualization/base.html' %}
+{% load static %}
+
+
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'data_visualization/base.css' %}"/>
+    <style>
+        #read-later {
+            margin: 2rem 0;
+          }
+          
+        
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1 style="text-align: center;">DashBoard {{title}}</h1>
+    </div>
+    <div id="read-later" style="text-align: center;">
+        <form method="GET" action="{% url 'chart-year' %}">
+            <div class="form-control" >
+            
+                {{ form.year.label_tag }}
+                {{ form.year }}
+              
+            </div>
+            <div class="form-control" >
+                
+                {{ form.type.label_tag }}
+                {{ form.type }}
+              
+            </div>
+
+            <button type="submit" class="btn btn-secondary mt-2">Submit</button>
+        </form>
+    </div>
+ 
+    <div style="border:5px solid black;" class="my-2">
+        
+        {{ chart_type_year|safe }}
+       
+    </div>
+
+    <div id="read-later" style="text-align: center;">
+        <a href="{% url 'chart' %}"><button type="button" class="btn btn-warning">Back Main</button></a>
+    </div>
+    <form method="POST" action="{% url 'chart-logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary mt-2">LOGOUT</button>
+    </form>
+{% endblock content %}

@@ -21,6 +21,9 @@ def select_type_month(url_month:str, year:int, month:int, headers:dict, month_di
     
     response_opex_month = requests.get(url=URL_TYPE_MONTH , headers=headers)
     
+    if response_opex_month.status_code == 401:
+        return JsonResponse({"unauthorized": "Your session is over, please redirect to login again! "})
+    
     if response_opex_month.status_code == 200:
     
         df_opex_month = pd.DataFrame(response_opex_month.json())
@@ -53,6 +56,8 @@ def select_type_year(url_year:str, year:int, headers:dict, type:str):
     URL_TYPE_YEAR = f"{url_year}/{year}"
     
     response_opex_year = requests.get(url=URL_TYPE_YEAR, headers=headers)
+    if response_opex_year.status_code != 200:
+        return JsonResponse({"unauthorized": "Your session is over, please redirect to login again! "})
     df_opex_year = pd.DataFrame(response_opex_year.json())
     
     try:
@@ -93,7 +98,7 @@ def login(request):
                 "password": password
             }
          
-            response = requests.post(url=f"{url}api-login/", json=parameters)
+            response = requests.post(url=f"{url}/api-login/", json=parameters)
             
             if response.status_code == 200:
                 request.session["token"] = response.json()["token"]
@@ -119,7 +124,7 @@ def logout(request):
         parameters = {
                     "user": user_id,
                 }
-        response = requests.post(url=f"{url}api-logout/", json=parameters, headers=headers)
+        response = requests.post(url=f"{url}/api-logout/", json=parameters, headers=headers)
         if response.status_code == 200:
             request.session["token"] = None
             request.session["user"] = None
@@ -127,6 +132,15 @@ def logout(request):
         return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
 
 def chart(request):
+    access_token = request.session.get("token")
+    if access_token is None:
+        return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
+    
+    return render(request, 'data_visualization/chart.html')
+    
+    
+def chart_month(request):
+    
     access_token = request.session.get("token")
     if access_token is None:
         return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
@@ -156,6 +170,7 @@ def chart(request):
     
     if month_input is None:
         month_input = 1
+        
     if year_input is None:
         now = datetime.now()
         year_input = int(now.strftime("%Y"))
@@ -164,7 +179,69 @@ def chart(request):
     
     if type_input is None:
         type_input = "capex"
+        
+    if type_input == "capex":
+        url_month = f"{url}/api/capex-df-month"
+       
+    elif type_input == "opex":
+        url_month = f"{url}/api/opex-df-month"
     
+    chart_type_month = select_type_month(url_month, int(year_input), int(month_input), headers, month_dict, type_input)
+    
+    context = {'chart_type_month': chart_type_month,'form': DateForm(), "title":type_input}
+    
+    return render(request, 'data_visualization/month_chart.html', context)
+
+def chart_year(request):
+    access_token = request.session.get("token")
+    if access_token is None:
+        return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
+              
+    headers = {
+        "Authorization": access_token
+    }
+        
+    year_input = request.GET.get('year')
+    type_input = request.GET.get('type')
+            
+    if year_input is None:
+        now = datetime.now()
+        year_input = int(now.strftime("%Y"))
+        
+    url = os.getenv('MAIN_URL')
+        
+    if type_input is None:
+        type_input = "capex"
+            
+    if type_input == "capex":
+        url_year = f"{url}/api/capex-df-year"
+   
+    elif type_input == "opex":
+        url_year = f"{url}/api/opex-df-year"
+        
+    chart_type_year = select_type_year(url_year, int(year_input), headers, type_input)        
+    context = {'chart_type_year': chart_type_year, 'form': DateForm(), "title":type_input}
+        
+    return render(request, 'data_visualization/year_chart.html', context)
+        
+    
+def chart_revenue(request):
+    access_token = request.session.get("token")
+    if access_token is None:
+        return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
+              
+    headers = {
+        "Authorization": access_token
+    }
+        
+    year_input = request.GET.get('year')
+   
+        
+    if year_input is None:
+        now = datetime.now()
+        year_input = int(now.strftime("%Y"))
+        
+    url = os.getenv('MAIN_URL')
     URL_OPEX_CAPEX_REVENUE = f"{url}/api/opex-capex-revenue/{year_input}"
     
     response_revenue = requests.get(url=URL_OPEX_CAPEX_REVENUE, headers=headers)
@@ -206,18 +283,8 @@ def chart(request):
     )
     chart_revenue = fig_2.to_html()
     
-    if type_input == "capex":
-        url_month = f"{url}/api/capex-df-month"
-        url_year = f"{url}/api/capex-df-year"
-   
-    elif type_input == "opex":
-        url_month = f"{url}/api/opex-df-month"
-        url_year = f"{url}/api/opex-df-year"
-
-    chart_type_month = select_type_month(url_month, int(year_input), int(month_input), headers, month_dict, type_input)
-    chart_type_year = select_type_year(url_year, int(year_input), headers, type_input)
     
-    context = {'chart_type_month': chart_type_month,'chart_type_year': chart_type_year, 'chart_revenue': chart_revenue,'form': DateForm(), "title":type_input}
-    return render(request, 'data_visualization/chart.html', context)
+    context = {'chart_revenue': chart_revenue,'form': DateForm()}
+    return render(request, 'data_visualization/revenue_chart.html', context)
     
     
