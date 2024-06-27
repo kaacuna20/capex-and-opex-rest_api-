@@ -28,6 +28,7 @@
 - [Running the Project](#running-the-project)
 - [Testing](#testing)
 - [Running Tests](#running-tests)
+- [Deployment on AWS EC2](#deployment-on-aws-ec2)
 
 ## Project Structure
 ```ini
@@ -701,3 +702,196 @@ This command will discover and run all the test cases defined in the tests/ dire
 - Test cases are organized into different files based on the functionality they cover, such as `test_api_capex.p`y for CAPEX-related tests, `test_api_opex.py` for OPEX-related tests, and `test_user.py` for user-related tests.
   
 This setup ensures that your API is thoroughly tested and helps maintain the integrity of your application.
+
+## Deployment on AWS EC2
+### Prerequisites
+- AWS account
+- EC2 instance (Ubuntu)
+- PostgreSQL database on AWS RDS
+- Security groups configured to allow SSH, HTTP, and HTTPS connections
+
+### Serving Static Files
+
+1. Collect static files:
+   ```ini
+	 python manage.py collectstatic 
+   ```
+   
+2. Update `settings.py` to configure static files:
+    ```ini
+	 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+	STATIC_URL = 'static/' 
+   ```
+
+3. Update `urls.py` to serve static files in development:
+  ```ini
+	 from django.contrib import admin
+	from django.urls import path, include
+	from api_users.views import Login, Logout
+	#from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+	from django.urls import re_path
+	from rest_framework import permissions
+	from drf_yasg.views import get_schema_view
+	from drf_yasg import openapi
+	from django.conf.urls.static import static
+	from django.conf import settings
+	
+	
+	schema_view = get_schema_view(
+	   openapi.Info(
+	      title="Api Opex & Capex",
+	      default_version='v1',
+	      description="A Rest Api that simulate a private company that return kpi dataframe like opex & capex",
+	      contact=openapi.Contact(email="kaacuna20@gmail.com"),
+	      license=openapi.License(name="BSD License"),
+	   ),
+	   public=True,
+	   permission_classes=(permissions.AllowAny,),
+	)
+	
+	urlpatterns = [
+	    path('admin/', admin.site.urls),
+	    path("api-auth/", include("rest_framework.urls")),
+	    path("api-login/", Login.as_view(), name="login"),
+	    path("api-logout/", Logout.as_view(), name="logout"),
+	    path("api/", include("api.urls")),
+	    path("api-user/", include("api_users.urls")),
+	    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+	    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+	    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+	    path('', include("data_visualization.urls")),
+	] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
+   ```
+### Connecting to PostgreSQL on AWS RDS
+1. Install `dj-database-url` package:
+Make sure you have the `dj-database-url` package installed. If not, install it using pip:
+```ini
+	 pip install dj-database-url 
+   ```
+
+2. Update `settings.py` to configure PostgreSQL connection:
+Add the following lines to handle the PostgreSQL connection in your `settings.py` file:
+```ini
+    DATABASES["default"] = dj_database_url.parse(os.getenv('DB_URL'))
+ ```
+
+3. Update your `.env` file:
+   Add the `DB_URL` environment variable to your `.env` file:
+   ```ini
+    DB_URL=postgres://postgres:password@db.ip-rds.us-east-2.rds.amazonaws.com:5432/database-name
+   ```
+
+4. Migrate the table in database:
+   ```ini
+    python manage.py migrate
+   ```
+   
+### Steps to Deploy Django Application in EC2 instance
+1. **Update and Upgrade the System**
+    ```bash
+    sudo apt-get update
+    sudo apt-get upgrade
+    ```
+
+2. **Clone the Repository**
+    ```bash
+    sudo git clone https://github.com/kaacuna20/capex-and-opex-rest_api-.git
+    ```
+
+3. **Install Python and Virtual Environment**
+    ```bash
+    sudo apt install python3 python3-venv python3-pip
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    pip install setuptools
+    ```
+
+4. **Install and Configure Nginx**
+    ```bash
+    sudo apt-get install -y nginx
+    ```
+
+5. **Install and Configure Supervisor**
+    ```bash
+    sudo apt-get install supervisor
+    cd /etc/supervisor/conf.d/
+    sudo touch gunicorn.conf
+    sudo nano gunicorn.conf
+    ```
+
+    Add the following to `gunicorn.conf`:
+    ```ini
+    [program:gunicorn]
+    directory=/home/ubuntu/capex-and-opex-rest_api-
+    command=/home/ubuntu/capex-and-opex-rest_api-/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/capex-and-opex-rest_api-/app.sock backend.wsgi:application  
+    autostart=true
+    autorestart=true
+    stderr_logfile=/var/log/gunicorn/gunicorn.err.log
+    stdout_logfile=/var/log/gunicorn/gunicorn.out.log
+
+    [group:guni]
+    programs:gunicorn
+    ```
+
+    Create the log directory and update Supervisor:
+    ```bash
+    sudo mkdir /var/log/gunicorn
+    sudo supervisorctl reread
+    sudo supervisorctl update
+    sudo supervisorctl status
+    ```
+
+6. **Configure Nginx for Django**
+    ```bash
+    cd /etc/nginx/
+    sudo nano nginx.conf
+    ```
+
+    Add the following to `nginx.conf`:
+    ```nginx
+    user root;
+
+    http {
+        # other configurations...
+
+        server_names_hash_bucket_size 128;
+
+        # other configurations...
+    }
+    ```
+
+    Create the `django.conf` file:
+    ```bash
+    cd sites-available
+    sudo touch django.conf
+    sudo nano django.conf
+    ```
+
+    Add the following to `django.conf`:
+    ```nginx
+    server {
+        listen 80;
+        server_name your-ec2-dns.amazonaws.com;
+
+        location / {
+            include proxy_params;
+            proxy_pass http://unix:/home/ubuntu/capex-and-opex-rest_api-/app.sock;
+        }
+    }
+    ```
+
+    Enable the Nginx configuration and restart the service:
+    ```bash
+    sudo nginx -t
+    sudo ln -s /etc/nginx/sites-available/django.conf /etc/nginx/sites-enabled
+    sudo service nginx restart
+    ```
+
+## Updating Django Application
+If you make changes to your Django application, you can restart the Gunicorn process:
+```bash
+sudo supervisorctl restart guni:gunicorn
+sudo supervisorctl status
+
