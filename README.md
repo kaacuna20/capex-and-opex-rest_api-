@@ -93,7 +93,7 @@ backend/
 |    │   ├── __init__.py
 |    │   └── test_user.py
 |    └── test_setup.py
-|
+├── staticfiles/
 ├── venv/
 ├── db.sqlite3    
 ├── manage.py  
