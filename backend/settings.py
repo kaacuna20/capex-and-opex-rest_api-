@@ -115,7 +115,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-DATABASES["default"] = dj_database_url.parse(os.getenv('DB_URL'))
+DATABASES["default"] = dj_database_url.parse("postgres://postgres:pesfifa2024*@dev-db.c1w48gku27i2.us-east-2.rds.amazonaws.com:5432/posgrest_db")#os.getenv('DB_URL'))
 
 
 SWAGGER_SETTINGS = {

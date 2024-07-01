@@ -9,7 +9,15 @@
         #read-later {
             margin: 2rem 0;
           }
-          
+          #quantity input {
+            background: transparent;
+            border-radius:25px;
+            text-transform: uppercase;
+            font-weight: bold;
+            width: 100px;
+            margin: 0 auto;
+            text-align: center
+        }
         
     </style>
 
@@ -22,7 +30,7 @@
     <div id="read-later" style="text-align: center;">
         <form method="GET" action="{% url 'chart-revenue' %}">
            
-        <div class="form-control" >
+        <div class="form-control" id="quantity">
             
             {{ form.year }}
           
@@ -40,7 +48,7 @@
         {{ chart_revenue|safe }}
     </div>
     <div id="read-later" style="text-align: center;">
-        <a href="{% url 'chart' %}"><button type="button" class="btn btn-warning">Back Main</button></a>
+        <a href="{% url 'chart' %}"><button type="button" class="btn btn-warning">Back DashBoard Options</button></a>
     </div>
     <form method="POST" action="{% url 'chart-logout' %}">
         {% csrf_token %}
