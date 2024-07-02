@@ -17,6 +17,8 @@
 - The method to authenticate users is JWT;
 - Create and app where can render templates and show the api working with a minimalist dashboard;
 
+You can test and enjoy aplication in next link: http://ec2-18-116-26-246.us-east-2.compute.amazonaws.com/
+
 ## Table of Contents
 - [Project Structure](#project-structure)
 - [Overview](#overview)
@@ -804,6 +806,7 @@ Add the following lines to handle the PostgreSQL connection in your `settings.py
     sudo apt install python3 python3-venv python3-pip
     python3 -m venv venv
     source venv/bin/activate
+    cd capex-and-opex-rest_api-
     pip install -r requirements.txt
     pip install setuptools
     ```
@@ -825,7 +828,7 @@ Add the following lines to handle the PostgreSQL connection in your `settings.py
     ```ini
     [program:gunicorn]
     directory=/home/ubuntu/capex-and-opex-rest_api-
-    command=/home/ubuntu/capex-and-opex-rest_api-/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/capex-and-opex-rest_api-/app.sock backend.wsgi:application  
+    command=/home/ubuntu/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/capex-and-opex-rest_api-/app.sock backend.wsgi:application  
     autostart=true
     autorestart=true
     stderr_logfile=/var/log/gunicorn/gunicorn.err.log
