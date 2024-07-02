@@ -61,7 +61,7 @@ def select_type_year(url_year:str, year:int, headers:dict, type:str):
     df_opex_year = pd.DataFrame(response_opex_year.json())
     
     try:
-        df_long = pd.melt(df_opex_year, id_vars=["Month"], value_vars=["Salaries", "Utilities", "Rent"],
+        df_long = pd.melt(df_opex_year, id_vars=["Month"], value_vars=["Salaries", "Utilities", "Rent", "Operating Costs"],
                     var_name="Category", value_name="Amount")
     except KeyError:
         df_long = pd.melt(df_opex_year, id_vars=["Month"], value_vars=["Equipment", "Buildings", "Technology"],
@@ -139,8 +139,7 @@ def chart(request):
     return render(request, 'data_visualization/chart.html')
     
     
-def chart_month(request):
-    
+def chart_month(request): 
     access_token = request.session.get("token")
     if access_token is None:
         return JsonResponse({"unauthorized": "You haven't Logged in, redirect to login session! "})
@@ -282,7 +281,6 @@ def chart_revenue(request):
         margin=dict(l=40, r=40, t=80, b=40)
     )
     chart_revenue = fig_2.to_html()
-    
     
     context = {'chart_revenue': chart_revenue,'form': DateForm()}
     return render(request, 'data_visualization/revenue_chart.html', context)

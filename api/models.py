@@ -46,7 +46,8 @@ OPEX_CHOICES = (
         ("salaries", 'Salaries'),
         ("utilities", 'Utilities'),
         ("rent", 'Rent'),
-     )
+        ("operating costs", 'Operating Costs'),
+     )#operating costs
 
 class OpexContractor(BaseContractor):
     def __str__(self):
